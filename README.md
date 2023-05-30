@@ -69,11 +69,17 @@ CRS_ELAPSED_TIME = Planned amount of time needed for the flight trip
 ACTUAL_ELAPSED_TIME = AIR_TIME+TAXI_IN+TAXI_OUT
 
 AIR_TIME = The time duration between wheels_off and wheels_on time
+
 DISTANCE = Distance between two airports
+
 CARRIER_DELAY = Delay caused by the airline in minutes
+
 WEATHER_DELAY = Delay caused by weather
+
 NAS_DELAY = Delay caused by air system
+
 SECURITY_DELAY = caused by security reasons
+
 LATE_AIRCRAFT_DELAY = Delay caused by security
 
 Source: Kaggle
@@ -81,10 +87,16 @@ Source: Kaggle
 As I mentioned in the Introduction, I will be only considering features that you are aware of before the plane takes off. This way what I am predicting is before you board the plane and not while you are in the plane in mid air, which wouldn't be of much use as you would want to know if you will be late before you board the plane. Adding any of the features listed below would increase your accuracy to at least 85%, which sounds great, but then again, what's the point if you are already in the air or about to take off?
 
 TAXI_OUT
+
 WHEELS_OFF
+
 WHEELS_ON
+
 TAXI_IN
+
 ARR_DELAY
+
 ACTUAL_ELAPSED_TIME
+
 Now, there is an additional feature that will biased the models, and that is the DEP_DELAY (Departure Delay), which yes, if your plane is leaving late then your chances of arriving late to your destination will increase. The plot on Figure_1, which is part of the EDA done, shows this. There I compared the DEP_DELAY with the ARR_DELAY by airline, and as you can see, normally when your flight leaves late, the airlines pushes for the flights to have shorter elapse times to compensate for the delay, and in some cases, this is accounted for and the flight ends up arriving either on time, or earlier, such as with Delta Airlines and Alaska airlines, which have both negative arrival averages, meaning an early arrival.
 
