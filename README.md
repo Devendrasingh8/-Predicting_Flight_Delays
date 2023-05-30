@@ -22,7 +22,7 @@ The objective of this project is very clear as described in the introduction: "D
 
 # Data Gathering
 
-The dataset comes from Kaggle, and it consists of a multi-year data ranging from 2009 to 2018 separated in 10 different files.
+The dataset comes from [Kaggle](https://www.kaggle.com/datasets/yuanyuwendymu/airline-delay-and-cancellation-data-2009-2018), and it consists of a multi-year data ranging from 2009 to 2018 separated in 10 different files.
 
 Each one of these datasets has 28 categories/features in average with a few million rows. Because of the size of each file I chose to work with only one, corresponding to the 2018. This one consists of 28 categories with just over 7.2 million rows.
 
@@ -84,7 +84,7 @@ SECURITY_DELAY = caused by security reasons
 
 LATE_AIRCRAFT_DELAY = Delay caused by security
 
-Source: Kaggle
+Source: [Kaggle](https://www.kaggle.com/datasets/yuanyuwendymu/airline-delay-and-cancellation-data-2009-2018)
 
 As I mentioned in the Introduction, I will be only considering features that you are aware of before the plane takes off. This way what I am predicting is before you board the plane and not while you are in the plane in mid air, which wouldn't be of much use as you would want to know if you will be late before you board the plane. Adding any of the features listed below would increase your accuracy to at least 85%, which sounds great, but then again, what's the point if you are already in the air or about to take off?
 
