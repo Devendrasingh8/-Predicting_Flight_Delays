@@ -1,4 +1,4 @@
-![]([https://github.com/Devendrasingh8/Data-Analysis-and-EDA/blob/main/Dashboard.gif](https://github.com/Devendrasingh8/-Predicting_Flight_Delays/blob/main/Figure_29.png))
+![]([https://github.com/Devendrasingh8/-Predicting_Flight_Delays/blob/main/Figure_29.png])
 
 # Predicting_Flight_Delays
 
