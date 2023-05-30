@@ -86,17 +86,12 @@ Source: Kaggle
 
 As I mentioned in the Introduction, I will be only considering features that you are aware of before the plane takes off. This way what I am predicting is before you board the plane and not while you are in the plane in mid air, which wouldn't be of much use as you would want to know if you will be late before you board the plane. Adding any of the features listed below would increase your accuracy to at least 85%, which sounds great, but then again, what's the point if you are already in the air or about to take off?
 
-TAXI_OUT
-
-WHEELS_OFF
-
-WHEELS_ON
-
-TAXI_IN
-
-ARR_DELAY
-
-ACTUAL_ELAPSED_TIME
+* TAXI_OUT
+* WHEELS_OFF
+* WHEELS_ON
+* TAXI_IN
+* ARR_DELAY
+* ACTUAL_ELAPSED_TIME
 
 Now, there is an additional feature that will biased the models, and that is the DEP_DELAY (Departure Delay), which yes, if your plane is leaving late then your chances of arriving late to your destination will increase. The plot on Figure_1, which is part of the EDA done, shows this. There I compared the DEP_DELAY with the ARR_DELAY by airline, and as you can see, normally when your flight leaves late, the airlines pushes for the flights to have shorter elapse times to compensate for the delay, and in some cases, this is accounted for and the flight ends up arriving either on time, or earlier, such as with Delta Airlines and Alaska airlines, which have both negative arrival averages, meaning an early arrival.
 
@@ -151,12 +146,13 @@ The imbalanced data means that I will need to weight these two classes while tra
 
 Other features were engineered mainly to perform the EDA. Among those, some of the most relevant were:
 
-Calculating the total number of flights and total numbers of delayed flights (from departure and arrivals separately) by airline
-Extracting the "weekday" from the date using the "datetime" function from Pandas. Using the same function, the "month" and "day of the month" were also extracted
-Calculating percentages of delayed departures and arrivals by airlines and by cities
-Extracting the top destinations with average delays and arrivals
-Calculating best weekday to travel in terms of delays (departures and arrivals)
-Impact of late departure on arrival time (with difference between both)
+* Calculating the total number of flights and total numbers of delayed flights (from departure and arrivals separately) by airline
+* Extracting the "weekday" from the date using the "datetime" function from Pandas. Using the same function, the "month" and "day of the month" were also extracted
+* Calculating percentages of delayed departures and arrivals by airlines and by cities
+* Extracting the top destinations with average delays and arrivals
+* Calculating best weekday to travel in terms of delays (departures and arrivals)
+* Impact of late departure on arrival time (with difference between both)
+
 As with the cleaning and preprocessing, if you wish to see more detail about the feature engineering, refer to the respective notebooks.
 
 # Exploratory Data Analysis (EDA)
@@ -184,11 +180,11 @@ Again, I won't go through all of them here, but just share a few interesting fin
 
 Total Number of Flights by Airline: The plot from Figure 3 talks by itself, therefore, it is quite easy to interpret. Basically stating that the top 5 airlines in terms of number of flights are:
 
-> SouthWest Airlines
-> Delta Airlines
-> American Airlines
-> SkyWest Airlines
-> United Airlines
+* SouthWest Airlines
+* Delta Airlines
+* American Airlines
+* SkyWest Airlines
+* United Airlines
 
 With no additional comments about this, I will come back to this list after looking at other plots.
 
@@ -202,7 +198,7 @@ You as the airline don't want to be above that red line/threshold, you want to b
 
 Another interesting observation is that SouthWest Airlines and American Airlines are two of the other top 5 in terms of number of flights and they are both above that threshold that we want to avoid.
 
-igure 4. Percentage of delayed flights by airline
+Figure 4. Percentage of delayed flights by airline
 
 Most Popular Destinations with the largest arrival delay: Because there are a total of 358 destination airports within 341 cities, I decided to focus only on the top 30.
 
@@ -210,7 +206,7 @@ Chicago, Atlanta, New York, Dallas-Fort Worth and Denver are the top 5 destinati
 
 Out of the top 15 destinations, the city with the most delays is by far Newark, where you are almost guaranteed to arrive late. Others cities that have very negative records are San Francisco, Orlando, Boston, Philadelphia, Ft. Lauderdale, Tampa and Chantilly.
 
-igure 5. Most popular destinations (cities) with their average arrival delay (min)
+Figure 5. Most popular destinations (cities) with their average arrival delay (min)
 
 Now the plot on Figure 5 compares the most popular destinations again with the average departure delays, with the dashed line being the average. So again, you would want to be below that threshold, but in this case we are talking about cities and multiple airlines at the same time.
 
@@ -226,3 +222,33 @@ Figure 7. Number of destinations by airline
 
 # Modeling
 
+Now that the data has been cleaned and gone through a thorough EDA process done in two stages, its time to start with the modeling which will be a binary classification, where a "0" will correspond to a flight being on time, and a "1" to a flight being delayed.
+
+This dataset consists of 28 features, out of which there are a series of them (listed above) that can affect the predictive model in a positive way in terms of predictions and therefore accuracy. However, when you use them, you are making the assumption that you are most probably already sitting in the plane, or in the best case scenario, your flight status on the departure boards has been changed to: "delayed". This is what the majority of the published models do, so I decided to do something slightly different by limiting the model to only features that won't directly indicate a delay.
+
+Because I am not sure which Machine Learning algorithm will be the best for this type of binary classification I will be testing the following four:
+
+1. Bagged Trees
+2. Random Forest
+3. XGBoost
+4. Deep Neural Network (MLP)
+
+# Summary & Recommendations
+
+* From the EDA done it seems as DA (Delta Airlines) and Alaska Airlines are two of the most reliable airlines in terms of arrivals on time, and in the case of DA, they are top 5 in number of flights per year, average delay (with the lowest), and number of destinations within the US. However it is important to remember that these conclusions are based on a 1 year data analysis and this could well be a good year for those airlines and bad for others for any particular reason, therefore I would recommend to follow this up by doing a more historical analysis adding the rest of the 9 years of data at least for the EDA, as I can imagine it would be a lot more hardware demanding to run the same models.
+
+* It is quite hard to create a ML model for flight delay prediction before you even know that the flight is delayed on the departure board. Neural Networks responded a lot better under these conditions with an average difference in accuracy, precision and recall of over 15%. Maybe an even more thorough feature analysis could rise these metrics to close to 90%, so it might be worth investing the time to do so.
+
+* There are a series of variables (features) that were not included on this project due to a shortage of data and I believe after my research that they are key to predicting a flight delay accurately. Some of these are the weather, mechanical issues, and security issues. Then inside some of these there are sub-categories that also play a key role such as humidity, wind, precipitation, etc, and should be accounted for. All of this data is available but needs to be scraped from different websites and it will require quite a lot more work to add it to the existing dataset, but will certainly translate into more realistic and therefore more accurate predictions.
+
+# Way Forward
+
+* Add to the EDA a time of the day analysis, to understand if there is a time more prone to delays than others. Because there are 24 hours a day, maybe make this every 3 hours, ending up with 8 categories. It is known that early and late in the day flights tend to have less delays, so this would be interesting to try to validate
+
+* Do the EDA with the 10 year dataset and not just the 2018. This will require additional cleaning and pre-processing but will definitely give more insight as to the airline performance and hence put me in a position to give a more accurate recommendation
+
+* Re-run the ML and Neural Network model with the best metrics again but with more cities with the objective of adding them into a dash application.
+
+* Keep on increasing the number of epochs on the Neural Networks to see if the model actually converges or not
+
+* Run the models again with all departures but only one destination, maybe Chicago and/or Atlanta and compare the outputs to the real ones to see how accurate the chosen model really is.
