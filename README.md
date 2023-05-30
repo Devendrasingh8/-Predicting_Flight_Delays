@@ -100,3 +100,129 @@ ACTUAL_ELAPSED_TIME
 
 Now, there is an additional feature that will biased the models, and that is the DEP_DELAY (Departure Delay), which yes, if your plane is leaving late then your chances of arriving late to your destination will increase. The plot on Figure_1, which is part of the EDA done, shows this. There I compared the DEP_DELAY with the ARR_DELAY by airline, and as you can see, normally when your flight leaves late, the airlines pushes for the flights to have shorter elapse times to compensate for the delay, and in some cases, this is accounted for and the flight ends up arriving either on time, or earlier, such as with Delta Airlines and Alaska airlines, which have both negative arrival averages, meaning an early arrival.
 
+Figure_1. "Departure Delays" compared to "Arrival Delays" by airline
+
+Some people might argue, that if your flight's departure is delayed, you will see it on the screens before you board the plane, so that means that I should leave it on my predictive model, right? well yes and no. Yes I should leave it because you are right about seeing the flight's departure being delayed before you board the plane, but then no, because a late departure will most probably mean a late arrival (Figure 1) even when the airline tries to compensate by reducing the elapsed time as the above plot suggests. So this will definitely affect the accuracy of my predictions in a positive but unrealistic predictive way. Still, I have ran two models for each ML and Neural Network algorithm that I have tested, one with the DEP_DELAY and a second without the DEP_DELAY. You will notice that there is a large difference in the accuracy of the models and respective metric, but that is because of the nature of the predictions being made.
+
+# Data Preprocessing/Cleaning
+
+The data preprocessing and cleaning was done in two separate parts, documented in two notebooks to make it easier to follow up due to their length.
+
+The first section is a standard cleaning involving minimal feature engineering, and the second is driven after the 20 most common arrival destinations were defined based on the number of flights and is the one that contains the most feature engineering done.
+
+The first step before going into the data cleaning was to define what I will be considering a delayed flight. This is important because it will determine if I can drop or not any other columns and how I will be choosing the predictive features to work with. So, for a flight to be considered delayed, it has to meet the following criteria:
+
+* Arrive late at its destination
+
+Quite simple, and this means, that even if a flight has a delay from its departure, but still arrives to its destination on time, it will not be considered a delayed flight
+
+Based on the above, also a canceled flight will not be a delayed one either. Therefore, you can assume that I dropped that column, but not only for this reason, but also due to the high number/percentage of missing values (~81%). This could have been very useful for EDA, but unfortunately most of it was not available.
+
+Each one of the columns within the main dataframe was analyzed individually with the exception of the following 5:
+
+1. CARRIER_DELAY
+2. WEATHER_DELAY
+3. NAS_DELAY
+4. SECURITY_DELAY
+5. LATE_AIRCRAFT_DELAY
+
+These 5 represent the different reasons why a flight is delayed. Unfortunately, for the 2018 dataset, 5,744,152 rows are missing, adding an 81% of the entire dataset. Therefore, a decision to drop those columns was also made.
+
+Another set of features that were interesting but were not taken into account for the predictive modeling were the following four:
+
+1. TAXI_OUT
+2. WHEELS_OFF
+3. WHEELS_ON
+4. TAXI_IN
+
+These four, as Figure_2 illustrates, add up the elapse time, which is the amount of time initially planned for the flight. Unfortunately, these don't add much value plus they can biased the model, so as a result they were dropped. An interesting fact about these columns though, is that a significant number of WHEELS_ON and TAXI_IN didn't have any values, whereas their respective TAXI_OUT and WHEELS_OFF did. How should this be interpreted? is it because the airlines responsible for them made mistakes and forgot about them? or is it because these aren't that relevant for them? more on this can be seen on the Cleaning and Preprocessing notebook where I tried to explain my findings and relate them to the responsible/owner airlines, but for the time being these will enter the category of what are known as ghost flights.
+
+Because there are quite a few features on this dataset, I won't explain the work done on each one of them, instead I will just mentioned some that I found interesting, and if you would like to see more detail, the two cleaning and processing notebooks have every step explained in depth.
+
+After a brief look at the data, the key features that needed some immediate work were the Airline (OP_CARRIER), and departing (ORIGIN) and arrival city/airport (DEST). These needed to have their abbreviations and their IATA codes changed to the airline and airports names respectively.
+
+The dataset for this particular year (2018) didn't have available the airport.csv file with their name and IATA codes, and because this dataset contains 358 airports, adding them manually was not an option given the time for this project. The airlines was the easy part as they were only 18 of them, so that was done with the help of Wikipedia. For the IATA codes, the solution was to use the older file from 2015 by using its list of airports, then compared it to the one from the 2018 that I extracted from my main dataset (.csv file). That gave a difference of 41 airports that needed to be found online plus 4 airports that were on the 2015 list but not on the 2018 list, therefore those needed to be dropped. This still involved a bit of manual work but considerably less than the initial 358.
+
+In terms of engineered features, the first one to be calculated was the target (FLIGHT_STATUS) which was the flight being delayed or not. This is a binary column, with a 0 for flights arriving on time, and a 1 for flights arriving late, calculated from the "Arrival Delay" (ARR_DELAY) column. With this column ready, the next step was a quick check for the data distribution, meaning, checking if the data is balanced or not. Results are plotted on Figure 3 and they suggest a severe imbalance dataset with an almost 2:1 ratio, this means right away that looking at accuracy on its own will not be enough to evaluate the models, but I will also need to look at other metrics such as Precision, Recall and F1.
+
+Figure 3. Data distribution showing a high imbalance dataset.
+
+The imbalanced data means that I will need to weight these two classes while training my models.
+
+Other features were engineered mainly to perform the EDA. Among those, some of the most relevant were:
+
+Calculating the total number of flights and total numbers of delayed flights (from departure and arrivals separately) by airline
+Extracting the "weekday" from the date using the "datetime" function from Pandas. Using the same function, the "month" and "day of the month" were also extracted
+Calculating percentages of delayed departures and arrivals by airlines and by cities
+Extracting the top destinations with average delays and arrivals
+Calculating best weekday to travel in terms of delays (departures and arrivals)
+Impact of late departure on arrival time (with difference between both)
+As with the cleaning and preprocessing, if you wish to see more detail about the feature engineering, refer to the respective notebooks.
+
+# Exploratory Data Analysis (EDA)
+
+The same way how the data cleaning and preprocessing was done in two separate notebooks, the EDA was done in two as well, however the difference here is that the visualizations done on each of the EDAs were done with different libraries. The first was done using matplotlib and Seaborn, and the second with plotly.
+
+On the first EDA notebook, the following questions were addressed:
+1. Total Number of Flights by Airline
+2. Number of Delayed Flights by Airline
+3. Percentage of Delayed Flights by Airline
+4. Total Minutes Delayed by Airline
+5. Average Delay Time by Airline
+6. 30 Most Common Destination (Cities)
+7. Worse and Best months to travel
+8. Is there a Better day of the month to travel?
+9. Best weekday to avoid delays
+10. Impact of Delays (Departure vs Arrival Delay)
+11. Most Popular Destinations with Average Arrival Delays
+12. Number of Destination by Airline
+13. Recommended airlines based on lowest delay times
+
+You will notice that each one of these questions were addressed and discussed individually and afterward, put together to answer question 13.
+
+Again, I won't go through all of them here, but just share a few interesting findings:
+
+Total Number of Flights by Airline: The plot from Figure 3 talks by itself, therefore, it is quite easy to interpret. Basically stating that the top 5 airlines in terms of number of flights are:
+
+> SouthWest Airlines
+> Delta Airlines
+> American Airlines
+> SkyWest Airlines
+> United Airlines
+
+With no additional comments about this, I will come back to this list after looking at other plots.
+
+Figure 3. Total number of flights by airline sorted is descending order.
+
+Percentage of Delayed Flights by Airline: It seems normal to think that the most flights you have the more likely it is that you will end up having more delayed flights. It's simple math right? For example, lets assume a fix percentage of delayed flights such as 30%, well 30% of 100 is 30, whereas 30% of 1000 is 300. We translate that into flights, and there is a huge difference with a ratio of 10:1 in terms of numbers, but the percentage remains the same.
+
+Now according to this dataset, the average of delayed flights in the US for 2018 was 37.52%, which is the red horizontal line on plot from Figure 4. I know that in the introduction I mentioned a 20% of flights within the US being delayed, but that number if overall for the 58 airlines that operate domestic US flights, whereas my dataset only looks at 18 airlines which I am assuming are the major carriers.
+
+You as the airline don't want to be above that red line/threshold, you want to be as far as possible below it. If you pay attention to Delta Airline, they are top 5 in terms of number of flights, but they are dead last in terms of delay percentage. It is quite interesting the relationship that they have managed to achieve.
+
+Another interesting observation is that SouthWest Airlines and American Airlines are two of the other top 5 in terms of number of flights and they are both above that threshold that we want to avoid.
+
+igure 4. Percentage of delayed flights by airline
+
+Most Popular Destinations with the largest arrival delay: Because there are a total of 358 destination airports within 341 cities, I decided to focus only on the top 30.
+
+Chicago, Atlanta, New York, Dallas-Fort Worth and Denver are the top 5 destination, with Chicago being number 1, but interesting enough it has a pretty high average of annual delays, so if you are traveling to Chicago, there is a high chance that your flight will be delayed. Atlanta in the contrary, is the second most popular destination and with a very low delay at arrivals. New York and Dallas-Fort Worth aren't great, and Denver is just within the average.
+
+Out of the top 15 destinations, the city with the most delays is by far Newark, where you are almost guaranteed to arrive late. Others cities that have very negative records are San Francisco, Orlando, Boston, Philadelphia, Ft. Lauderdale, Tampa and Chantilly.
+
+igure 5. Most popular destinations (cities) with their average arrival delay (min)
+
+Now the plot on Figure 5 compares the most popular destinations again with the average departure delays, with the dashed line being the average. So again, you would want to be below that threshold, but in this case we are talking about cities and multiple airlines at the same time.
+
+If we look at Chicago, we can see that it has quite a high average departure delay, but combining this information with the one from Figure 4, we can infer that flights going to Chicago try to compensate for late departures by reducing the elapse time, and in average it seems as they succeed. With regards to Atlanta, it still is in a good position by being the second most popular destination, with low arrival delay and still with an average delay below the average. I am not sure if this is related to the arrival or departure airports, the weather in this area, or why exactly this happens, and in order to explain it, I would need some additional data which I don't have and that goes beyond the scope of this project anyways, but perhaps is something that can be added later on.
+
+Once again Newark is in bad shape by having the highest average of departures delayed. Orlando and Boston and two others that combined with Figure 4, puts them in bad position. And then you can see the cities which are in pretty bad shape going way above the threshold, such as Philadelphia, Baltimore, Ft. Lauderdale, Miami, Tampa, Nashville and Dallas. Reasons for this? again not enough data nor time to find out.
+
+Figure 6. Most popular destinations (cities) with longest average departure delays (min)
+
+Number of destinations by Airlines The plot from Figure 7 is the last one that I will comment on this introductory README. Here you see the number of destinations per airline and once again it's interesting because it shows as highlighted on that plot, that Delta Airlines is the third with most destination. Remember, that it is also top 5 in terms of number of flights, it has the lowest percentage of delayed flights, and it is in negative with regards to the total delayed minutes. It seems as they perform quite well from this pack of 18 airlines so it is the one that I would recommend based on this information for the year 2018. Now this might have changed, I really could say. What I could do and add it later on to this project, is extend the study to all the files cover the 10 years available and that way see if this is a one year trend, or if it is really a historical one, which in that case, it will become more solid to make such a recommendation, but for now I will have to live with what I have.
+
+Figure 7. Number of destinations by airline
+
+# Modeling
+
